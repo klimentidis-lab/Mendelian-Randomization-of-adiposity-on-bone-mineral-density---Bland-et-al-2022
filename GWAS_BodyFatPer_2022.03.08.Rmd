@@ -1,0 +1,118 @@
+---
+title: "GWAS: Body Fat Sex Combined"
+author: "V. Bland"
+date: "03/08/2022"
+output: html_document
+---
+
+Load data
+```{r}
+library(tidyverse)
+```
+```{r}
+rm(list = ls())
+load('/xdisk/yann/arora/UKBiobank/Derived_variables/Main_dataset_UKB_n487320_derived variables_20191014_mdat.rda')
+
+
+dim(mdat)
+#[1] 487320   4116
+```
+
+Exclusions - study withdrawal, heterozygosity outliers, non-Whites
+```{r}
+#Exclude people no longer participating
+table(mdat$f.eid < 0)
+excl <- read.table('/xdisk/yann/arora/UKBiobank/Derived_variables/w15678_20200204.csv', header=F)
+sum(mdat$f.eid %in% excl$V1) 
+#[1] 23
+
+#HET Outliers
+sum(mdat$het.missing.outliers == 1)
+#[1] 0
+
+#Genetic exclusions, White only
+sum(mdat$GenExcl3 == 1)
+#[1] 28432
+
+#Subset with all exclusions
+mdat2 <- mdat %>%
+  filter(!(f.eid %in% excl$V1), !(GenExcl3 == 1), !(het.missing.outliers == 1))
+dim(mdat2)
+#[1] 458866   4116
+
+#458888   4116
+
+#Check
+sum(!(mdat2$GenExcl3 == 1) &!(mdat2$het.missing.outliers == 1) &
+      !(mdat2$f.eid %in% excl$V1)) 
+
+#458866
+```
+
+Check distribution
+```{R}
+summary(mdat2$f.23099.0.0)
+hist(mdat2$f.23099.0.0)
+```
+
+Create Female and Male Specific Data Sets
+```{R}
+#table of sexes
+table(mdat2$f.31.0.0, useNA = c("always"))
+#     0      1   <NA> 
+#249147 209719      0 
+
+#divide out females only
+female <- mdat2[mdat2$f.31.0.0 == 0, ]
+
+#divide out males only
+male <- mdat2[mdat2$f.31.0.0 == 1, ]
+```
+
+Check distributions
+```{R}
+#females
+summary(female$f.23099.0.0)
+hist(female$f.23099.0.0)
+
+#males
+summary(male$f.23099.0.0)
+hist(male$f.23099.0.0)
+```
+
+Covariate file - Both Sexes
+```{r}
+setwd('/xdisk/yann/arora/UKBiobank/Derived_variables')
+covarBFsexcombo <- subset(mdat2, select=c("f.eid","f.eid", "f.23099.0.0", "f.31.0.0", "f.54.0.0", "chip", "Age_v0", "Age_sq","PC1", "PC2", "PC3","PC4", "PC5", "PC6", "PC7", "PC8", "PC9", "PC10"))
+# Need FID and IID
+colnames(covarBFsexcombo)[1]<-"FID"
+colnames(covarBFsexcombo)[2]<-"IID"
+
+
+write.table(covarBFsexcombo, file="GWAS_BFPer_SexCombo_20220308.txt", row.names = F, quote = F)
+```
+
+Covariate file - Female
+```{r}
+setwd('/xdisk/yann/arora/UKBiobank/Derived_variables')
+covarBFfemale <- subset(female, select=c("f.eid","f.eid", "f.23099.0.0","f.54.0.0", "chip", "Age_v0", "Age_sq","PC1", "PC2", "PC3",
+"PC4", "PC5", "PC6", "PC7", "PC8", "PC9", "PC10"))
+# Need FID and IID
+colnames(covarBFfemale)[1]<-"FID"
+colnames(covarBFfemale)[2]<-"IID"
+
+
+write.table(covarBFfemale, file="GWAS_BFPer_Female_20220308.txt", row.names = F, quote = F)
+```
+
+Covariate file - Male
+```{r}
+setwd('/xdisk/yann/arora/UKBiobank/Derived_variables')
+covarBFmale <- subset(male, select=c("f.eid","f.eid", "f.23099.0.0","f.54.0.0", "chip", "Age_v0", "Age_sq","PC1", "PC2", "PC3","PC4", "PC5", "PC6", "PC7", "PC8", "PC9", "PC10"))
+# Need FID and IID
+colnames(covarBFmale)[1]<-"FID"
+colnames(covarBFmale)[2]<-"IID"
+
+
+write.table(covarBFmale, file="GWAS_BFPer_Male_20220308.txt", row.names = F, quote = F)
+```
