@@ -1,4 +1,4 @@
-# Mendelian-Randomization-of-adiposity-on-bone-mineral-density---Bland-et-al.-2022
+# Mendelian Randomization of adiposity on bone mineral density - Bland et al. 2022
 
 This repository contains codes, tables, and figures, underlying the manuscript entitled:
 
