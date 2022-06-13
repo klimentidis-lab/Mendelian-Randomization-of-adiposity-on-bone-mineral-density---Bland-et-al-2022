@@ -1,0 +1,2114 @@
+---
+title: "MR of MFA/% body fat and bone"
+output: html_notebook
+---
+
+```{r}
+library(TwoSampleMR)
+library(dplyr)
+```
+
+Part 1: Metabolically favorable adiposity
+
+Sex combined: Femoral Neck aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = '/xdisk/yann/mig2020/rsgrps/yann/Victoria/GWAS_BodyFatPer_SexCombo/FAVariants_PerBF_SexComb_GWAS.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure
+exposure_dat <- clump_data(exposure_dat)
+
+#read in outcome data
+outcome_dat <- extract_outcome_data(exposure_dat$SNP, outcomes = 'ieu-a-980')
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_egger_regression", "mr_ivw", "mr_weighted_median"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>% 
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+```
+
+Sex combined: Forearm aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = '/xdisk/yann/mig2020/rsgrps/yann/Victoria/GWAS_BodyFatPer_SexCombo/FAVariants_PerBF_SexComb_GWAS.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat <- clump_data(exposure_dat)
+
+#read in outcome data
+outcome_dat <- extract_outcome_data(exposure_dat$SNP, outcomes = 'ieu-a-977')
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_egger_regression", "mr_ivw", "mr_weighted_median"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>% 
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Sex combined: Lumbar Spine aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = '/xdisk/yann/mig2020/rsgrps/yann/Victoria/GWAS_BodyFatPer_SexCombo/FAVariants_PerBF_SexComb_GWAS.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat <- clump_data(exposure_dat)
+
+#read in outcome data
+outcome_dat <- extract_outcome_data(exposure_dat$SNP, outcomes = 'ieu-a-982')
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_egger_regression", "mr_ivw", "mr_weighted_median"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>% 
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+```
+
+Sex combined: Whole Body aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = '/xdisk/yann/mig2020/rsgrps/yann/Victoria/GWAS_BodyFatPer_SexCombo/FAVariants_PerBF_SexComb_GWAS.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat <- clump_data(exposure_dat)
+
+#read in outcome data
+setwd('/xdisk/yann/mig2020/rsgrps/yann/Victoria/MR_Bone')
+outcome_dat <- read_outcome_data(
+  filename='TB_BMD_rsid.txt',
+  sep = " ",
+  snp_col = "SNP",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_egger_regression", "mr_ivw", "mr_weighted_median"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>%  
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+```
+
+Age Stratified: 60+ Whole Body aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = '/xdisk/yann/mig2020/rsgrps/yann/Victoria/GWAS_BodyFatPer_SexCombo/FAVariants_PerBF_SexComb_GWAS.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat <- clump_data(exposure_dat)
+
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='TB_BMD_rsid_60plus.txt',
+  sep = " ",
+  snp_col = "SNP",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_ivw", "mr_weighted_median", "mr_egger_regression"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>% 
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Age Stratified: 45-60 Whole Body aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = '/xdisk/yann/mig2020/rsgrps/yann/Victoria/GWAS_BodyFatPer_SexCombo/FAVariants_PerBF_SexComb_GWAS.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat <- clump_data(exposure_dat)
+
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='TB_BMD_rsid_45-60.txt',
+  sep = " ",
+  snp_col = "SNP",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_ivw", "mr_weighted_median", "mr_egger_regression"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>%  
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw", "mr_weighted_median", "mr_egger_regression"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Age Stratified: 30-45 Whole Body aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = '/xdisk/yann/mig2020/rsgrps/yann/Victoria/GWAS_BodyFatPer_SexCombo/FAVariants_PerBF_SexComb_GWAS.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat <- clump_data(exposure_dat)
+
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='TB_BMD_rsid_30-45.txt',
+  sep = " ",
+  snp_col = "SNP",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_ivw", "mr_weighted_median", "mr_egger_regression"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>% 
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Age Stratified: 15-30 Whole Body aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = '/xdisk/yann/mig2020/rsgrps/yann/Victoria/GWAS_BodyFatPer_SexCombo/FAVariants_PerBF_SexComb_GWAS.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat <- clump_data(exposure_dat)
+
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='TB_BMD_rsid_15-30.txt',
+  sep = " ",
+  snp_col = "SNP",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_ivw", "mr_weighted_median", "mr_egger_regression"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>% 
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Age Stratified: <15 Whole Body aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = '/xdisk/yann/mig2020/rsgrps/yann/Victoria/GWAS_BodyFatPer_SexCombo/FAVariants_PerBF_SexComb_GWAS.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat <- clump_data(exposure_dat)
+
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='TB_BMD_rsid_15orless.txt',
+  sep = " ",
+  snp_col = "SNP",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_ivw", "mr_weighted_median", "mr_egger_regression"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+#Individual and combined SNP effects
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>% 
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Females: Femoral Neck aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = '/xdisk/yann/mig2020/rsgrps/yann/Victoria/GWAS_BodyFatPer_SexCombo/Females/FAVariants_PerBF_Females_GWAS.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat <- clump_data(exposure_dat)
+
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='GEFOS2_FNBMD_WOMEN_GC_space.txt',
+  sep = " ",
+  snp_col = "MarkerName",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "Pvalue"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_egger_regression", "mr_ivw", "mr_weighted_median"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 244851) %>%
+  mutate(., samplesize.outcome = 22177) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>%
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Females: Lumbar Spine aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = '/xdisk/yann/mig2020/rsgrps/yann/Victoria/GWAS_BodyFatPer_SexCombo/Females/FAVariants_PerBF_Females_GWAS.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat <- clump_data(exposure_dat)
+
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='GEFOS2_LSBMD_WOMEN_GC_space.txt',
+  sep = " ",
+  snp_col = "MarkerName",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "Pvalue"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_egger_regression", "mr_ivw", "mr_weighted_median"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 -> mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 244851) %>%
+  mutate(., samplesize.outcome = 22990) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>%
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Males: Femoral Neck aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = 'FAVariants_PerBF_Males_GWAS.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat <- clump_data(exposure_dat)
+
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='GEFOS2_FNBMD_MEN_GC_space.txt',
+  sep = " ",
+  snp_col = "MarkerName",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "Pvalue"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_egger_regression", "mr_ivw", "mr_weighted_median"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 -> mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 205347) %>%
+  mutate(., samplesize.outcome = 9980) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>%
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Males: Lumbar Spine aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = 'FAVariants_PerBF_Males_GWAS.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat <- clump_data(exposure_dat)
+
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='GEFOS2_LSBMD_MEN_GC_space.txt',
+  sep = " ",
+  snp_col = "MarkerName",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "Pvalue"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_egger_regression", "mr_ivw", "mr_weighted_median"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 205347) %>%
+  mutate(., samplesize.outcome = 9971) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>% 
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+
+-----------------------------------------
+-----------------------------------------
+-----------------------------------------
+
+
+Part 2: Percent Body Fat
+
+Sex combined: Femoral Neck aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = 'FullGWASresults_PerBF_SexComb.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat_e8 <- exposure_dat[exposure_dat$pval.exposure < 5e-8, ]
+exposure_dat_clump <- clump_data(exposure_dat_e8)
+
+#read in outcome data
+outcome_dat <- extract_outcome_data(exposure_dat_clump$SNP, outcomes = 'ieu-a-980')
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat)
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat_clump, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>% 
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Sex combined: Forearm aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = 'FullGWASresults_PerBF_SexComb.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat_e8 <- exposure_dat[exposure_dat$pval.exposure < 5e-8, ]
+exposure_dat_clump <- clump_data(exposure_dat_e8)
+
+#read in outcome data
+outcome_dat <- extract_outcome_data(exposure_dat_clump$SNP, outcomes = 'ieu-a-977')
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat)
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat_clump, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>%  
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir, useNA = c("always"))
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Sex combined: Lumbar Spine aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = 'FullGWASresults_PerBF_SexComb.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat_e8 <- exposure_dat[exposure_dat$pval.exposure < 5e-8, ]
+exposure_dat_clump <- clump_data(exposure_dat_e8)
+
+#read in outcome data
+outcome_dat <- extract_outcome_data(exposure_dat_clump$SNP, outcomes = 'ieu-a-982')
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat)
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat_clump, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>%
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Sex combined: Whole Body aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = 'FullGWASresults_PerBF_SexComb.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat_e8 <- exposure_dat[exposure_dat$pval.exposure < 5e-8, ]
+exposure_dat_clump <- clump_data(exposure_dat_e8)
+
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='TB_BMD_rsid_allages.txt',
+  sep = " ",
+  snp_col = "SNP",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat_clump, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat)
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat_clump, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>%
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Age Stratified: 60+ Whole Body aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = 'FullGWASresults_PerBF_SexComb.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat_e8 <- exposure_dat[exposure_dat$pval.exposure < 5e-8, ]
+exposure_dat_clump <- clump_data(exposure_dat_e8)
+
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='TB_BMD_rsid_60plus.txt',
+  sep = " ",
+  snp_col = "SNP",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat_clump, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat)
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat_clump, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>% 
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Age Stratified: 45-60 Whole Body aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = 'FullGWASresults_PerBF_SexComb.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat_e8 <- exposure_dat[exposure_dat$pval.exposure < 5e-8, ]
+exposure_dat_clump <- clump_data(exposure_dat_e8)
+
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='TB_BMD_rsid_45-60.txt',
+  sep = " ",
+  snp_col = "SNP",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat_clump, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat)
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat_clump, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>%  
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Age Stratified: 30-45 Whole Body aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = 'FullGWASresults_PerBF_SexComb.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat_e8 <- exposure_dat[exposure_dat$pval.exposure < 5e-8, ]
+exposure_dat_clump <- clump_data(exposure_dat_e8)
+
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='TB_BMD_rsid_30-45.txt',
+  sep = " ",
+  snp_col = "SNP",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat_clump, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat)
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat_clump, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>%
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Age Stratified: 15-30 Whole Body aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = 'FullGWASresults_PerBF_SexComb.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat_e8 <- exposure_dat[exposure_dat$pval.exposure < 5e-8, ]
+exposure_dat_clump <- clump_data(exposure_dat_e8)
+
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='TB_BMD_rsid_15-30.txt',
+  sep = " ",
+  snp_col = "SNP",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat_clump, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat)
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat_clump, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>%  
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Age Stratified: <15 Whole Body aBMD
+```{r}
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = 'FullGWASresults_PerBF_SexComb.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#clump exposure data
+exposure_dat_e8 <- exposure_dat[exposure_dat$pval.exposure < 5e-8, ]
+exposure_dat_clump <- clump_data(exposure_dat_e8)
+
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='TB_BMD_rsid_15orless.txt',
+  sep = " ",
+  snp_col = "SNP",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat_clump, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat)
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#_________plots_____________
+p1 <- mr_scatter_plot(mr_results, dat)
+p1
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat_clump, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 450198) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>% 
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir)
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Females: Femoral Neck aBMD
+```{r}
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='GEFOS_FNBMD_FEM_space.txt',
+  sep = " ",
+  snp_col = "MarkerName",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = 'FullGWASresults_PerBF_Females.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#align exposure and outcome data based on available SNPs in outcome data
+exposure_dat_e8 <- exposure_dat[exposure_dat$pval.exposure < 5e-8, ]
+table(exposure_dat_e8$SNP %in% outcome_dat$SNP) 
+exposure_dat_e8$snp.filter <- (exposure_dat_e8$SNP %in% outcome_dat$SNP) 
+exposure_dat_filter <- exposure_dat_e8[exposure_dat_e8$snp.filter == "TRUE", ]
+
+#clump exposure data
+exposure_dat_clump_fn <- clump_data(exposure_dat_filter)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat_clump, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_egger_regression", "mr_ivw", "mr_weighted_median"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat_clump, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 244851) %>%
+  mutate(., samplesize.outcome = 22990) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>% 
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir, useNA = c("always"))
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Females: Lumbar Spine aBMD
+```{r}
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='GEFOS_LSBMD_FEM_space.txt',
+  sep = " ",
+  snp_col = "MarkerName",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = 'FullGWASresults_PerBF_Females.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#align exposure and outcome data based on available SNPs in outcome data
+exposure_dat_e8 <- exposure_dat[exposure_dat$pval.exposure < 5e-8, ]
+table(exposure_dat_e8$SNP %in% outcome_dat$SNP) 
+exposure_dat_e8$snp.filter <- (exposure_dat_e8$SNP %in% outcome_dat$SNP) 
+exposure_dat_filter <- exposure_dat_e8[exposure_dat_e8$snp.filter == "TRUE", ]
+
+#clump exposure data
+exposure_dat_clump <- clump_data(exposure_dat_filter)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat_clump, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_egger_regression", "mr_ivw", "mr_weighted_median"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat_clump, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 244851) %>%
+  mutate(., samplesize.outcome = 22177) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>% 
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir, useNA = c("always"))
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Males: Femoral Neck aBMD
+```{r}
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='GEFOS_FNBMD_MEN_space.txt',
+  sep = " ",
+  snp_col = "MarkerName",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = 'FullGWASresults_PerBF_Males.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#align exposure and outcome data based on available SNPs in outcome data
+exposure_dat_e8 <- exposure_dat[exposure_dat$pval.exposure < 5e-8, ]
+table(exposure_dat_e8$SNP %in% outcome_dat$SNP) 
+exposure_dat_e8$snp.filter <- (exposure_dat_e8$SNP %in% outcome_dat$SNP) 
+exposure_dat_filter <- exposure_dat_e8[exposure_dat_e8$snp.filter == "TRUE", ]
+
+#clump exposure data
+exposure_dat_clump <- clump_data(exposure_dat_filter)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat_clump, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_egger_regression", "mr_ivw", "mr_weighted_median"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat_clump, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 205347) %>%
+  mutate(., samplesize.outcome = 9971) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>%
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir, useNA = c("always"))
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
+
+Males: Lumbar Spine aBMD
+```{r}
+#read in outcome data
+outcome_dat <- read_outcome_data(
+  filename='GEFOS_LSBMD_MEN_space.txt',
+  sep = " ",
+  snp_col = "MarkerName",
+  eaf_col = "Freq1",
+  beta_col = "Effect",
+  se_col = "StdErr",
+  effect_allele_col = "Allele1",
+  other_allele_col = "Allele2",
+  pval_col = "P.value"
+)
+
+#read in exposure data
+exposure_dat <- read_exposure_data(
+  file = 'FullGWASresults_PerBF_Males.txt',
+  sep = ' ',
+  snp_col = 'SNP',
+  beta_col = 'BETA',
+  se_col = 'SE',
+  effect_allele_col = 'ALLELE1',
+  phenotype_col = 'Phenotype',
+  units_col = 'units',
+  other_allele_col = 'ALLELE0',
+  eaf_col = 'A1FREQ',
+  samplesize_col = 'samplesize',
+  ncase_col = 'ncase',
+  ncontrol_col = 'ncontrol',
+  gene_col = 'gene',
+  pval_col = 'P_BOLT_LMM_INF'
+)
+
+#align exposure and outcome data based on available SNPs in outcome data
+exposure_dat_e8 <- exposure_dat[exposure_dat$pval.exposure < 5e-8, ]
+table(exposure_dat_e8$SNP %in% outcome_dat$SNP) 
+exposure_dat_e8$snp.filter <- (exposure_dat_e8$SNP %in% outcome_dat$SNP) 
+exposure_dat_filter <- exposure_dat_e8[exposure_dat_e8$snp.filter == "TRUE", ]
+
+#clump exposure data
+exposure_dat_clump <- clump_data(exposure_dat_filter)
+
+#harmonize exposure and outcome
+dat <- harmonise_data(exposure_dat_clump, outcome_dat, action = 2)
+
+#run MR
+mr_results <- mr(dat, method_list=c("mr_egger_regression", "mr_ivw", "mr_weighted_median"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(dat)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(dat)
+
+#----------- Steiger Filtering ----------- 
+steiger_dat <- harmonise_data(exposure_dat = exposure_dat_clump, outcome_dat = outcome_dat, action = 2) %>%
+  mutate(., samplesize.exposure = 205347) %>%
+  mutate(., samplesize.outcome = 9980) %>%
+  mutate(., sd.outcome = se.outcome*sqrt(samplesize.outcome)) %>%
+  mutate(., sd.exposure = se.exposure*sqrt(samplesize.exposure)) 
+
+steiger2 <- steiger_filtering(steiger_dat)
+table(steiger2$steiger_dir, useNA = c("always"))
+
+steiger2[steiger2$steiger_dir == F, 1]
+
+steiger2 <- steiger_filtering(steiger_dat) %>%
+  filter(., steiger_dir != FALSE) %>% 
+  mutate(., F.stat = ((samplesize.exposure - nrow(.) - 1) / nrow(.)) * (rsq.exposure/(1-rsq.exposure)) ) 
+
+table(steiger2$steiger_dir, useNA = c("always"))
+
+#run MR
+mr_results <- mr(steiger2, method_list=c("mr_ivw"))
+mr_results
+
+#test for heterogeneity
+mr_heterogeneity(steiger2)
+
+#test for pleiotropy from MR Egger Y-intercept
+mr_pleiotropy_test(steiger2)
+```
