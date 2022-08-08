@@ -1,0 +1,15 @@
+SNP	effect_allele.exposure	other_allele.exposure	eaf.exposure	beta.exposure	se.exposure	pval.exposure	exposure	mr_keep.exposure	pval_origin.exposure	id.exposure	data_source.exposure
+rs11118306	A	G	0.4105	0.1631	0.0125	6.7e-39	Metabolically_Favorable_Adiposity	TRUE	reported	NtCLX6	textfile
+rs13389219	C	T	0.6076	-0.1452	0.0126	8.5e-31	Metabolically_Favorable_Adiposity	TRUE	reported	NtCLX6	textfile
+rs2943653	C	T	0.3269	0.1305	0.0131	2.5e-23	Metabolically_Favorable_Adiposity	TRUE	reported	NtCLX6	textfile
+rs1801282	C	G	0.8803	-0.2453	0.019	2.7e-38	Metabolically_Favorable_Adiposity	TRUE	reported	NtCLX6	textfile
+rs2276936	A	C	0.5299	0.1033	0.0124	7.2e-17	Metabolically_Favorable_Adiposity	TRUE	reported	NtCLX6	textfile
+rs40271	C	T	0.2558	0.1018	0.0142	6.5e-13	Metabolically_Favorable_Adiposity	TRUE	reported	NtCLX6	textfile
+rs998584	C	A	0.5172	0.0764	0.0124	6.8e-10	Metabolically_Favorable_Adiposity	TRUE	reported	NtCLX6	textfile
+rs632057	T	G	0.372	-0.0705	0.0128	3.5e-08	Metabolically_Favorable_Adiposity	TRUE	reported	NtCLX6	textfile
+rs972283	A	G	0.4885	0.1171	0.0124	2.7e-21	Metabolically_Favorable_Adiposity	TRUE	reported	NtCLX6	textfile
+rs2980888	T	C	0.302	-0.0987	0.0135	2.4e-13	Metabolically_Favorable_Adiposity	TRUE	reported	NtCLX6	textfile
+rs11045172	A	C	0.8021	-0.0897	0.0156	8.8e-09	Metabolically_Favorable_Adiposity	TRUE	reported	NtCLX6	textfile
+rs7133378	G	A	0.681	-0.1619	0.0133	3.6e-34	Metabolically_Favorable_Adiposity	TRUE	reported	NtCLX6	textfile
+rs7258937	C	T	0.4917	-0.1352	0.0124	1.2e-27	Metabolically_Favorable_Adiposity	TRUE	reported	NtCLX6	textfile
+rs2267373	C	T	0.4189	0.1421	0.0126	1.8e-29	Metabolically_Favorable_Adiposity	TRUE	reported	NtCLX6	textfile
