@@ -1,0 +1,208 @@
+
+                     +-----------------------------+
+                      |                       ___   |
+                      |   BOLT-LMM, v2.3.4   /_ /   |
+                      |   August 10, 2019     /_/   |
+                      |   Po-Ru Loh            //   |
+                      |                        /    |
+                      +-----------------------------+
+					  
+Copyright (C) 2014-2019 Harvard University.
+Distributed under the GNU GPLv3 open source license.
+Compiled with USE_SSE: fast aligned memory access
+Compiled with USE_MKL: Intel Math Kernel Library linear algebra
+Boost version: 1_58
+Command line options:
+bolt \
+    --bed=ukb22418_c{1:2}_b0_v2.bed \
+    --bim=ukb22418_c{1:2}_b0_v2.bim \
+    --fam=Fam_file_for_BOLT-LMM.fam \
+    --bgenSampleFileList=bgenSampleFileList_xdisk \
+    --remove=bolt.in_plink_but_not_imputed.FID_IID.979.txt \
+    --remove=bolt.in_plink_but_not_imputed.FID_IID.652.txt \
+    --remove=bolt.in_plink_but_not_imputed.FID_IID.186.txt \
+    --phenoFile=GWAS_BFPer_SexCombo_20220415.txt \
+    --phenoCol=p23099_i0 \
+    --covarFile=GWAS_BFPer_SexCombo_20220415.txt \
+    --covarCol=p31 \
+    --covarCol=p54_i0 \
+    --covarCol=chip \
+    --qCovarCol=Age_v0 \
+    --qCovarCol=Age_sq \
+    --qCovarCol=PC{1:10} \
+    --covarMaxLevels=30 \
+    --bgenMinMAF=1e-3 \
+    --bgenMinINFO=0.4 \
+    --LDscoresFile=LDSCORE.1000G_EUR.tab.gz \
+    --geneticMapFile=genetic_map_hg19_withX.txt.gz \
+    --numThreads=16 \
+    --statsFile SexComb_PerBF_Gwas_chr1_2_Stats \
+    --statsFileBgenSnps=bolt_460K_selfRepWhite.PerBF_SexComb_Gwas.bgenv3.stats_chr1_2.gz \
+    --lmm \
+    --verboseStats 
+	
+Verifying contents of --bgenSampleFileList: bgenSampleFileList_xdisk
+Checking BGEN file ukb22828_c1_b0_v3.bgen
+(with SAMPLE file ukb22828_c1_b0_v3.sample)...
+snpBlocks (Mbgen): 7402791
+samples (Nbgen): 487409
+CompressedSNPBlocks: 1
+Layout: 2
+first snpID: 1:10177_A_AC
+first rsID: rs367896724
+Checking BGEN file ukb22828_c2_b0_v3.bgen
+(with SAMPLE file ukb22828_c2_b0_v3.sample)...
+snpBlocks (Mbgen): 8129063
+samples (Nbgen): 487409
+CompressedSNPBlocks: 1
+Layout: 2
+first snpID: 2:10179_TA_T
+first rsID: 2:10179_TA_T
+Setting number of threads to 16
+fam: Fam_file_for_BOLT-LMM.fam
+bim(s): ukb22418_c1_b0_v2.bim
+ukb22418_c2_b0_v2.bim
+ukb22418_c2_b0_v2.bim
+bed(s): ukb22418_c1_b0_v2.bed
+ukb22418_c2_b0_v2.bed
+=== Reading genotype data ===
+Total indivs in PLINK data: Nbed = 488377
+Reading remove file (indivs to remove): bolt.in_plink_but_not_imputed.FID_IID.979.txt
+Removed 979 individual(s)
+Reading remove file (indivs to remove): bolt.in_plink_but_not_imputed.FID_IID.652.txt
+Removed 652 individual(s)
+Reading remove file (indivs to remove): bolt.in_plink_but_not_imputed.FID_IID.186.txt
+Removed 186 individual(s)
+Total indivs stored in memory: N = 486560
+Reading bim file #1: ukb22418_c1_b0_v2.bim
+    Read 63487 snps
+Reading bim file #2: ukb22418_c2_b0_v2.bim
+    Read 61966 snps
+Total snps in PLINK data: Mbed = 125453
+Breakdown of SNP pre-filtering results:
+  125453 SNPs to include in model (i.e., GRM)
+  0 additional non-GRM SNPs loaded
+  0 excluded SNPs
+Filling in genetic map coordinates using reference file:
+  genetic_map_hg19_withX.txt.gz
+Allocating 125453 x 486560/4 bytes to store genotypes
+Reading genotypes and performing QC filtering on snps and indivs...
+Reading bed file #1: ukb22418_c1_b0_v2.bed
+    Expecting 7751445265 (+3) bytes for 488377 indivs, 63487 snps
+ukb22418_c2_b0_v2.bim
+bed(s): ukb22418_c1_b0_v2.bed
+ukb22418_c2_b0_v2.bed
+=== Reading genotype data ===
+Total indivs in PLINK data: Nbed = 488377
+Reading remove file (indivs to remove): bolt.in_plink_but_not_imputed.FID_IID.979.txt
+Removed 979 individual(s)
+Reading remove file (indivs to remove): bolt.in_plink_but_not_imputed.FID_IID.652.txt
+Removed 652 individual(s)
+Reading remove file (indivs to remove): bolt.in_plink_but_not_imputed.FID_IID.186.txt
+Removed 186 individual(s)
+Total indivs stored in memory: N = 486560
+Reading bim file #1: ukb22418_c1_b0_v2.bim
+    Read 63487 snps
+Reading bim file #2: ukb22418_c2_b0_v2.bim
+    Read 61966 snps
+Total snps in PLINK data: Mbed = 125453
+Breakdown of SNP pre-filtering results:
+  125453 SNPs to include in model (i.e., GRM)
+  0 additional non-GRM SNPs loaded
+  0 excluded SNPs
+Filling in genetic map coordinates using reference file:
+  genetic_map_hg19_withX.txt.gz
+Allocating 125453 x 486560/4 bytes to store genotypes
+Reading genotypes and performing QC filtering on snps and indivs...
+Reading bed file #1: ukb22418_c1_b0_v2.bed
+    Expecting 7751445265 (+3) bytes for 488377 indivs, 63487 snps
+ukb22418_c2_b0_v2.bim
+bed(s): ukb22418_c1_b0_v2.bed
+ukb22418_c2_b0_v2.bed
+=== Reading genotype data ===
+Total indivs in PLINK data: Nbed = 488377
+Reading remove file (indivs to remove): bolt.in_plink_but_not_imputed.FID_IID.979.txt
+Removed 979 individual(s)
+Reading remove file (indivs to remove): bolt.in_plink_but_not_imputed.FID_IID.652.txt
+Removed 652 individual(s)
+Reading remove file (indivs to remove): bolt.in_plink_but_not_imputed.FID_IID.186.txt
+Removed 186 individual(s)
+Total indivs stored in memory: N = 486560
+Reading bim file #1: ukb22418_c1_b0_v2.bim
+    Read 63487 snps
+Reading bim file #2: ukb22418_c2_b0_v2.bim
+    Read 61966 snps
+Total snps in PLINK data: Mbed = 125453
+Breakdown of SNP pre-filtering results:
+  125453 SNPs to include in model (i.e., GRM)
+  0 additional non-GRM SNPs loaded
+  0 excluded SNPs
+Filling in genetic map coordinates using reference file:
+  genetic_map_hg19_withX.txt.gz
+Allocating 125453 x 486560/4 bytes to store genotypes
+Reading genotypes and performing QC filtering on snps and indivs...
+Reading bed file #1: ukb22418_c1_b0_v2.bed
+    Expecting 7751445265 (+3) bytes for 488377 indivs, 63487 snps
+Filtering snp rs28659788: 0.898902 missing
+Filtering snp Affx-89007868: 0.8977 missing
+Filtering snp Affx-92042573: 0.112814 missing
+Filtering snp Affx-89019815: 0.897955 missing
+Filtering snp Affx-89025200: 0.897673 missing
+Filtered 4088 SNPs with > 0.1 missing
+Reading bed file #2: ukb22418_c2_b0_v2.bed
+    Expecting 7565738770 (+3) bytes for 488377 indivs, 61966 snps
+Filtering snp rs74426453: 0.897957 missing
+Filtering snp rs116792475: 0.897667 missing
+Filtering snp rs73907903: 0.114598 missing
+Filtering snp rs6748601: 0.103601 missing
+Filtering snp rs113071838: 0.897897 missing
+Filtered 4598 SNPs with > 0.1 missing
+Total indivs after QC: 486560
+Total post-QC SNPs: M = 116767
+  Variance component 1: 116767 post-QC SNPs (name: 'modelSnps')
+Time for SnpData setup = 378.894 sec
+Read data for 458789 indivs (ignored 448 without genotypes) from:
+  GWAS_BFPer_SexCombo_20220415.txt
+Number of indivs with no missing phenotype(s) to use: 450124
+Using categorical covariate: p31 (adding level 0)
+    Using categorical covariate: p31 (adding level 1)
+    Using categorical covariate: p54_i0 (adding level 10003)
+    Using categorical covariate: p54_i0 (adding level 11001)
+    Using categorical covariate: p54_i0 (adding level 11002)
+    Using categorical covariate: p54_i0 (adding level 11003)
+	Using categorical covariate: p54_i0 (adding level 11004)
+    Using categorical covariate: p54_i0 (adding level 11005)
+	Using categorical covariate: p54_i0 (adding level 11006)
+    Using categorical covariate: p54_i0 (adding level 11007)
+    Using categorical covariate: p54_i0 (adding level 11008)
+    Using categorical covariate: p54_i0 (adding level 11009)
+    Using categorical covariate: p54_i0 (adding level 11010)
+    Using categorical covariate: p54_i0 (adding level 11011)
+    Using categorical covariate: p54_i0 (adding level 11012)
+    Using categorical covariate: p54_i0 (adding level 11013)
+    Using categorical covariate: p54_i0 (adding level 11014)
+    Using categorical covariate: p54_i0 (adding level 11016)
+    Using categorical covariate: p54_i0 (adding level 11017)
+    Using categorical covariate: p54_i0 (adding level 11018)
+    Using categorical covariate: p54_i0 (adding level 11020)
+    Using categorical covariate: p54_i0 (adding level 11021)
+    Using categorical covariate: p54_i0 (adding level 11022)
+    Using categorical covariate: p54_i0 (adding level 11023)
+	Using categorical covariate: chip (adding level 0)
+    Using categorical covariate: chip (adding level 1)
+    Using quantitative covariate: Age_v0
+    Using quantitative covariate: Age_sq
+    Using quantitative covariate: PC1
+    Using quantitative covariate: PC2
+    Using quantitative covariate: PC3
+    Using quantitative covariate: PC4
+    Using quantitative covariate: PC5
+    Using quantitative covariate: PC6
+    Using quantitative covariate: PC7
+    Using quantitative covariate: PC8
+    Using quantitative covariate: PC9
+    Using quantitative covariate: PC10
+    Using quantitative covariate: CONST_ALL_ONES
+Number of individuals used in analysis: Nused = 450124
+
+	
