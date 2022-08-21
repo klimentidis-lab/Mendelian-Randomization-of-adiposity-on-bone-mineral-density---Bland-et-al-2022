@@ -1,0 +1,10 @@
+SNP	effect_allele.outcome	other_allele.outcome	eaf.outcome	beta.outcome	se.outcome	pval.outcome	outcome	mr_keep.outcome	pval_origin.outcome	id.outcome	data_source.outcome
+rs11118306	A	G	0.4337	0.0031	0.0152	0.8378	outcome	TRUE	reported	XRAUaN	textfile
+rs11045172	A	C	0.792	0.0056	0.0185	0.7613	outcome	TRUE	reported	XRAUaN	textfile
+rs7258937	T	C	0.5144	-0.0095	0.0147	0.5194	outcome	TRUE	reported	XRAUaN	textfile
+rs2943653	T	C	0.6614	-3e-04	0.0155	0.9825	outcome	TRUE	reported	XRAUaN	textfile
+rs2267373	T	C	0.5795	-0.0032	0.0153	0.835	outcome	TRUE	reported	XRAUaN	textfile
+rs40271	T	C	0.6819	0.0264	0.0163	0.1043	outcome	TRUE	reported	XRAUaN	textfile
+rs632057	T	G	0.3861	-0.0142	0.015	0.3438	outcome	TRUE	reported	XRAUaN	textfile
+rs998584	A	C	0.4721	0.0115	0.0156	0.4609	outcome	TRUE	reported	XRAUaN	textfile
+rs972283	A	G	0.4535	-0.0048	0.0149	0.7468	outcome	TRUE	reported	XRAUaN	textfile

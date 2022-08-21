@@ -1,0 +1,10 @@
+SNP	effect_allele.outcome	other_allele.outcome	eaf.outcome	beta.outcome	se.outcome	pval.outcome	outcome	mr_keep.outcome	pval_origin.outcome	id.outcome	data_source.outcome
+rs11118306	A	G	0.4194	0.0019	0.0131	0.8854	outcome	TRUE	reported	FTKjNK	textfile
+rs11045172	A	C	0.8048	0.0183	0.0163	0.2611	outcome	TRUE	reported	FTKjNK	textfile
+rs7258937	T	C	0.5143	-0.0156	0.013	0.2303	outcome	TRUE	reported	FTKjNK	textfile
+rs2943653	T	C	0.6549	0.0043	0.0138	0.7527	outcome	TRUE	reported	FTKjNK	textfile
+rs2267373	T	C	0.577	0.02	0.0132	0.1297	outcome	TRUE	reported	FTKjNK	textfile
+rs40271	T	C	0.6877	0.0107	0.0146	0.4634	outcome	TRUE	reported	FTKjNK	textfile
+rs632057	T	G	0.3957	-0.0239	0.0133	0.07136	outcome	TRUE	reported	FTKjNK	textfile
+rs998584	A	C	0.4717	-0.0115	0.0136	0.4	outcome	TRUE	reported	FTKjNK	textfile
+rs972283	A	G	0.4554	-0.0256	0.0134	0.05566	outcome	TRUE	reported	FTKjNK	textfile

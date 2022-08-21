@@ -1,0 +1,10 @@
+SNP	effect_allele.outcome	other_allele.outcome	eaf.outcome	beta.outcome	se.outcome	pval.outcome	outcome	mr_keep.outcome	pval_origin.outcome	id.outcome	data_source.outcome
+rs11118306	A	G	0.4139	0.0014	0.0234	0.9531	outcome	TRUE	reported	W0J021	textfile
+rs11045172	A	C	0.7867	0.0383	0.0283	0.1753	outcome	TRUE	reported	W0J021	textfile
+rs7258937	T	C	0.5119	0.0034	0.0228	0.8811	outcome	TRUE	reported	W0J021	textfile
+rs2943653	T	C	0.6582	-0.02	0.0236	0.3953	outcome	TRUE	reported	W0J021	textfile
+rs2267373	T	C	0.5883	0.0356	0.0231	0.1228	outcome	TRUE	reported	W0J021	textfile
+rs40271	T	C	0.7125	-0.0186	0.0256	0.4666	outcome	TRUE	reported	W0J021	textfile
+rs632057	T	G	0.3728	-0.0127	0.024	0.5965	outcome	TRUE	reported	W0J021	textfile
+rs998584	A	C	0.4703	0.0256	0.0275	0.3518	outcome	TRUE	reported	W0J021	textfile
+rs972283	A	G	0.4631	0.0254	0.0235	0.2783	outcome	TRUE	reported	W0J021	textfile

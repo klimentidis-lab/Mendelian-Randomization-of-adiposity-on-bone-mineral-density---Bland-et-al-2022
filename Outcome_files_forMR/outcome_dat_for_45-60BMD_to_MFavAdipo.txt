@@ -1,0 +1,10 @@
+SNP	effect_allele.outcome	other_allele.outcome	eaf.outcome	beta.outcome	se.outcome	pval.outcome	outcome	mr_keep.outcome	pval_origin.outcome	id.outcome	data_source.outcome
+rs11118306	A	G	0.4256	-0.023	0.0109	0.03583	outcome	TRUE	reported	G7olwu	textfile
+rs11045172	A	C	0.794	-0.0125	0.0135	0.3539	outcome	TRUE	reported	G7olwu	textfile
+rs7258937	T	C	0.5194	-0.0098	0.0105	0.3515	outcome	TRUE	reported	G7olwu	textfile
+rs2943653	T	C	0.6658	0.0038	0.0112	0.7317	outcome	TRUE	reported	G7olwu	textfile
+rs2267373	T	C	0.5862	0.0341	0.011	0.001868	outcome	TRUE	reported	G7olwu	textfile
+rs40271	T	C	0.7033	-0.0072	0.0123	0.5561	outcome	TRUE	reported	G7olwu	textfile
+rs632057	T	G	0.3936	0.015	0.011	0.1709	outcome	TRUE	reported	G7olwu	textfile
+rs998584	A	C	0.4785	0.0201	0.0112	0.07413	outcome	TRUE	reported	G7olwu	textfile
+rs972283	A	G	0.4761	-0.0026	0.0106	0.807	outcome	TRUE	reported	G7olwu	textfile
